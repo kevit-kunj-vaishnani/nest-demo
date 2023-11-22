@@ -1,26 +1,32 @@
-import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Body, Controller, Get, Param, Post, NotFoundException } from '@nestjs/common';
 import { CreateMessageDto } from './dtos/create-message.dto';
-
-const MESSAGE = [];
+import { MessagesService } from './messages.service';
 
 @Controller('messages')
 export class MessagesController {
+  
+
+  constructor(public messagesService: MessagesService) {}   //this above statement will means this argument are automatically assign as property to class.
+
   @Post('/add')
   addmessage(@Body() body: CreateMessageDto) {
-    MESSAGE.push(body);
-    Logger.log(body);
-    return body;
+    return this.messagesService.create(body.content);
   }
 
   @Get('/all')
   getAllmessage() {
-    return MESSAGE;
+    return this.messagesService.findAll();
   }
 
   @Get('/:id')
-  getOnemessage(@Param('id') id: number) {
-    return MESSAGE.filter((i) => {
-      return i.id == id;
-    });
+  async getOnemessage(@Param('id') id: string) {
+    const message = await this.messagesService.findOne(id);
+
+    if(!message){
+      throw new NotFoundException(`message not found of id: ${id}`)
+    }
+
+    return message;
   }
 }

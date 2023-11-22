@@ -1,14 +1,8 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateMessageDto {
   @IsString()
-  name: string;
-
-  @IsNumber()
-  age: number;
-
-  @IsNumber()
-  id: number;
+  content: string;
 }
 
 // dto is a pattern that helps define and validate data that is transferred between the client and the server.
